@@ -115,7 +115,8 @@ class Obstacle:
         x = window_width
         y = random.randint(70, window_height - 70)
         #Obstacle(window_width, y, width, width, (210, 0, 0), speed)
-        pattern = random.randint(0, 2)
+        pattern = random.randint(0, 3)
+        pattern = 0
         randRange = random.randint(6, 12)
         if pattern == 0:
             # L
@@ -137,6 +138,49 @@ class Obstacle:
                 Obstacle(x + i * (width + 5), y + i * (width + 5), width, width, (210, 0, 0), speed)
             for i in range(randRange // 2):
                 Obstacle(x - i * (width + 5), y + i * (width + 5), width, width, (210, 0, 0), speed)
+        if pattern == 3:
+            for i in range(randRange):
+                if i % 2 == 0:
+                    Obstacle(x + i * (width + 5), y + width, width, width, (210, 0, 0), speed)
+                else:
+                    Obstacle(x + i * (width + 5), y, width, width, (210, 0, 0), speed)
+        Obstacle.fitOnScreen()
+
+    @staticmethod
+    def fitOnScreen():
+        # change y to fit on screen
+        maxYIndex = Obstacle.findMaxY()
+        minYIndex = Obstacle.findMinY()
+        if Obstacle.obstacles[maxYIndex].y > window_height:
+            difference = Obstacle.obstacles[maxYIndex].y - window_height
+            for obj in Obstacle.obstacles:
+                obj.y -= difference
+        if Obstacle.obstacles[minYIndex].y < 0:
+            difference = (-1) * Obstacle.obstacles[minYIndex].y
+            for obj in Obstacle.obstacles:
+                obj.y += difference
+    
+    # find max y in the array of obstacles, return index
+    @staticmethod
+    def findMaxY():
+        maxY = Obstacle.obstacles[0].y
+        index = 0
+        for obj in Obstacle.obstacles:
+            if obj.y > maxY:
+                maxY = obj.y
+                index = Obstacle.obstacles.index(obj)
+        return index
+
+    # find min y in the array of obstacles, return index
+    @staticmethod
+    def findMinY():
+        minY = Obstacle.obstacles[0].y
+        index = 0
+        for obj in Obstacle.obstacles:
+            if obj.y < minY:
+                minY = obj.y
+                index = Obstacle.obstacles.index(obj)
+        return index
 
     def isCollidingWith(self, xCirc, yCirc, radius):
         # center of rect
