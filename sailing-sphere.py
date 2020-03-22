@@ -55,6 +55,12 @@ class Background:
             obj.points.append([window_width, window_height])
             obj.points.append([0, window_height])
 
+#class Pattern:
+#    def __init__(self, name, x, y):
+#       self.name = name
+#       self.x = x
+#       self.y = y
+
 class Obstacle:
     obstacles = []
 
@@ -104,7 +110,7 @@ class Obstacle:
     
     @staticmethod
     def generateNextObstacles():
-        width = random.randint(50, 95)
+        width = random.randint(50, 75)
         # speed range
         if (timeChange * 0.15) >= 2:
             lowSpeed = 16 * math.floor(math.log(timeChange * 0.15, 2))
@@ -116,7 +122,6 @@ class Obstacle:
         y = random.randint(70, window_height - 70)
         #Obstacle(window_width, y, width, width, (210, 0, 0), speed)
         pattern = random.randint(0, 3)
-        pattern = 0
         randRange = random.randint(6, 12)
         if pattern == 0:
             # L
@@ -146,19 +151,40 @@ class Obstacle:
                     Obstacle(x + i * (width + 5), y, width, width, (210, 0, 0), speed)
         Obstacle.fitOnScreen()
 
+    #@staticmethod
+    #def findVertical():
+    #    # count = { (index: , count: ), (index: , count: ) }
+    #    vertIndecies = []
+    #    for i in range(len(Obstacle.obstacles) - 1):
+    #        lastY = Obstacle.obstacles[i]
+    #        if lastY != Obstacle.obstacles[i + 1]:
+    #            vertIndecies.append(Obstacle.obstacles[i + 1].index())
+    #        else: 
+    #            break
+    #    return vertIndecies
+
+    # problem, if the object goes from too far down to too far up.
     @staticmethod
     def fitOnScreen():
         # change y to fit on screen
         maxYIndex = Obstacle.findMaxY()
         minYIndex = Obstacle.findMinY()
         if Obstacle.obstacles[maxYIndex].y > window_height:
+            #print(f"Off bottom of screen y is {Obstacle.obstacles[maxYIndex].y}")
             difference = Obstacle.obstacles[maxYIndex].y - window_height
+            #print(f"difference is {difference}")
+            #print(f"Before Change:")
+            #for obj in Obstacle.obstacles:
+            #    print(f"{obj}")
             for obj in Obstacle.obstacles:
-                obj.y -= difference
+                obj.y -= (difference + Obstacle.obstacles[maxYIndex].height + 15)
+            #print(f"After change:")
+            #for obj in Obstacle.obstacles:
+            #    print(f"{obj}")
         if Obstacle.obstacles[minYIndex].y < 0:
             difference = (-1) * Obstacle.obstacles[minYIndex].y
             for obj in Obstacle.obstacles:
-                obj.y += difference
+                obj.y += (difference + Obstacle.obstacles[maxYIndex].height + 15)
     
     # find max y in the array of obstacles, return index
     @staticmethod
@@ -204,7 +230,7 @@ class Obstacle:
 
 class Player: 
     def __init__(self, radius, colour, yVelocity):
-        self.x = window_width // 2
+        self.x = window_width // 3  
         self.y = window_height // 2
         self.radius = radius
         self.colour = colour
